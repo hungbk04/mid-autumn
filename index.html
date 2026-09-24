@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d111e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Món Quà Trung Thu Dành Tặng Em ✨</title>
+
+  <!-- Google Fonts: Be Vietnam Pro & Dancing Script -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas cho hiệu ứng sao đêm, đom đóm & pháo hoa -->
+  <canvas id="stars-canvas"></canvas>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Nút bật/tắt nhạc nền floating góc trên -->
+  <button id="music-toggle" class="music-btn" aria-label="Bật/Tắt nhạc" title="Bật/Tắt nhạc">
+    <div class="music-icon-wrap">
+      <span class="music-icon">🎵</span>
+      <span class="music-wave wave-1"></span>
+      <span class="music-wave wave-2"></span>
+    </div>
+  </button>
+
+  <!-- Thẻ audio ẩn chứa nhạc Trung Thu -->
+  <audio id="bg-audio" preload="auto" loop></audio>
+
+  <!-- Bối cảnh Trung thu chung: Trăng rằm & Đèn lồng treo đung đưa -->
+  <div class="mid-autumn-sky">
+    <!-- Mặt trăng rằm lung linh -->
+    <div class="moon-wrap">
+      <div class="moon-halo"></div>
+      <div class="moon">
+        <div class="moon-crater c1"></div>
+        <div class="moon-crater c2"></div>
+        <div class="moon-crater c3"></div>
+      </div>
+    </div>
+
+    <!-- Mây bay lơ lửng -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <!-- Đèn lồng truyền thống đung đưa -->
+    <div class="lantern-cluster lantern-left">
+      <div class="lantern-string"></div>
+      <div class="lantern lantern-red">
+        <div class="lantern-cap-top"></div>
+        <div class="lantern-body">
+          <div class="lantern-rib l1"></div>
+          <div class="lantern-rib l2"></div>
+          <div class="lantern-symbol">福</div>
+        </div>
+        <div class="lantern-cap-bottom"></div>
+        <div class="lantern-tassel"></div>
+      </div>
+    </div>
+
+    <div class="lantern-cluster lantern-right">
+      <div class="lantern-string"></div>
+      <div class="lantern lantern-gold">
+        <div class="lantern-cap-top"></div>
+        <div class="lantern-body">
+          <div class="lantern-rib l1"></div>
+          <div class="lantern-rib l2"></div>
+          <div class="lantern-symbol">秋</div>
+        </div>
+        <div class="lantern-cap-bottom"></div>
+        <div class="lantern-tassel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER CHÍNH CHỨA 4 MÀN HÌNH -->
+  <main class="app-container">
+
+    <!-- ================= MÀN 1: CHIẾC HỘP KHÓA MẬT MÃ ================= -->
+    <section id="screen-1" class="screen active">
+      <div class="screen-content">
+        <header class="header-intro">
+          <span class="sub-badge">🏮 Rằm Tháng Tám Ấm Áp</span>
+          <h1 class="main-title">Đêm Hội Trăng Rằm</h1>
+          <p class="subtitle">Có một món quà đặc biệt gửi trao em...</p>
+        </header>
+
+        <!-- Chiếc hộp quà Trung Thu 3D đóng kín -->
+        <div class="gift-box-stage" id="closed-gift-box">
+          <div class="box-glow"></div>
+          <div class="gift-box-3d" id="box-3d-model">
+            <!-- Nắp hộp -->
+            <div class="box-lid" id="box-lid">
+              <div class="lid-top">
+                <div class="ribbon-cross-h"></div>
+                <div class="ribbon-cross-v"></div>
+                <div class="lid-bow">
+                  <div class="bow-left"></div>
+                  <div class="bow-right"></div>
+                  <div class="bow-center"></div>
+                </div>
+              </div>
+              <div class="lid-rim"></div>
+            </div>
+            <!-- Thân hộp -->
+            <div class="box-body">
+              <div class="ribbon-body-h"></div>
+              <div class="ribbon-body-v"></div>
+              <div class="box-pattern"></div>
+              <div class="box-lock-seal">
+                <span class="lock-icon">🔒</span>
+              </div>
+            </div>
+            <!-- Đổ bóng đáy hộp -->
+            <div class="box-shadow"></div>
+          </div>
+        </div>
+
+        <div class="action-prompt pulse-anim">
+          <span>✨ Chạm vào chiếc hộp để mở quà ✨</span>
+        </div>
+      </div>
+
+      <!-- MODAL NHẬP MẬT MÃ -->
+      <div id="password-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+          <div class="modal-header">
+            <span class="modal-icon">🏮</span>
+            <h2 class="modal-title">Mật Mã Tình Yêu</h2>
+            <p class="modal-hint">Gợi ý: Mật mã là ngày sinh của em ❤️</p>
+          </div>
+          
+          <form id="password-form" onsubmit="return false;">
+            <div class="pin-input-group">
+              <input 
+                type="text" 
+                id="pin-input" 
+                placeholder="ddmm" 
+                maxlength="10" 
+                autocomplete="off" 
+                inputmode="numeric"
+              >
+            </div>
+            <div id="pin-error" class="pin-error-msg hidden">
+              Sai rùi nè, thử lại đi bé iu! 🥺
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" id="modal-close-btn" class="btn btn-secondary">Đóng</button>
+              <button type="submit" id="submit-pin-btn" class="btn btn-primary">Mở Ngay 🎁</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MÀN 2: KHÁM PHÁ BÊN TRONG CHIẾC HỘP ================= -->
+    <section id="screen-2" class="screen">
+      <div class="screen-content">
+        <header class="header-intro">
+          <span class="sub-badge">✨ Bí Mật Mùa Trăng</span>
+          <h2 class="main-title">Khám Phá Bên Trong</h2>
+        </header>
+
+        <!-- Khối hộp đã mở nắp - Không gian lòng hộp bí ẩn -->
+        <div class="open-box-stage">
+          <!-- Hộp quà rỗng với lòng hộp đen tối có thể chạm vào -->
+          <div class="open-box-container" id="box-interior">
+            <!-- Nắp đã lật sang một bên -->
+            <div class="open-lid-tilted">
+              <div class="lid-bow small"></div>
+            </div>
+
+            <!-- Thân hộp nhìn từ góc trên xiên vào lòng -->
+            <div class="open-box-frame">
+              <div class="box-exterior-walls"></div>
+              
+              <!-- Khoảng không gian lòng hộp đen tối bí ẩn -->
+              <div class="box-interior-void" id="box-void">
+                <div class="void-ambient-glow" id="void-glow"></div>
+                <div class="void-particles" id="void-particles"></div>
+                <div class="sparkle-ring" id="sparkle-ring"></div>
+                <div class="tap-finger-guide" id="tap-finger-guide">
+                  <span class="finger-icon">👆</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TẤM THIỆP / KHUNG ẢNH KỶ NIỆM (Trôi từ trong lòng hộp lên ở lần chạm 2) -->
+            <div class="memory-card-wrap" id="memory-card">
+              <div class="memory-polaroid">
+                <div class="polaroid-pin">🏮</div>
+                <div class="polaroid-img-box">
+                  <img id="memory-photo" src="assets/hinh-anh-ky-niem.jpg" alt="Hình ảnh kỷ niệm" loading="lazy">
+                </div>
+                <div class="polaroid-caption">
+                  <p class="wish-text" id="wish-text-content">Chúc em yêu luôn xinh gái, vui vẻ và sẽ sớm bên anh</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chỉ dẫn tiến trình chạm -->
+        <div class="touch-counter-wrap">
+          <div class="step-dots">
+            <span class="step-dot" id="dot-1" title="Chạm lần 1"></span>
+            <span class="step-dot" id="dot-2" title="Chạm lần 2"></span>
+            <span class="step-dot" id="dot-3" title="Chạm lần 3"></span>
+          </div>
+          <div class="touch-hint-box" id="touch-hint-text">
+            <span class="hint-text pulse-text">Chạm vào bên trong hộp để khám phá bí mật ✨</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MÀN 3: THỬ THÁCH LỜI MỜI HẸN HÒ ================= -->
+    <section id="screen-3" class="screen">
+      <div class="screen-content justify-center">
+        <!-- Thiệp Lời mời hẹn hò trang trọng lung linh -->
+        <div class="invitation-card">
+          <div class="card-ornament top-ornament">🏮 🌕 🏮</div>
+          
+          <div class="special-gift-header">
+            <span class="gift-badge">MÓN QUÀ ĐẶC BIỆT NHẤT</span>
+            <h2 class="invite-title">Một Buổi Hẹn Hò Dưới Ánh Trăng</h2>
+          </div>
+
+          <div class="invite-quote">
+            <p>"Món quà đặc biệt. Đó là 1 buổi đi chơi với anh!"</p>
+            <span class="quote-sub">Em có đồng ý cùng anh ngắm trăng, rước đèn và thưởng bánh không?</span>
+          </div>
+
+          <!-- Khu vực 2 nút tương tác: Đồng ý & Không đồng ý -->
+          <div class="choice-playground" id="choice-playground">
+            <button id="btn-agree" class="btn-agree pulse-glow">
+              <span class="btn-text">Dạ em đồng ý ❤️</span>
+              <span class="btn-sparkle">✨</span>
+            </button>
+
+            <button id="btn-refuse" class="btn-refuse">
+              <span id="btn-refuse-text">Không nha 😝</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MÀN 4: FORM ĐẶT LỊCH HẸN & LỜI CẢM ƠN ================= -->
+    <section id="screen-4" class="screen">
+      <div class="screen-content">
+        <header class="header-intro">
+          <span class="sub-badge">💌 Lên Kế Hoạch Hẹn Hò</span>
+          <h2 class="main-title">Lịch Hẹn Cùng Anh</h2>
+          <p class="subtitle">Em chọn ngày giờ, cả thế giới để anh lo nhé!</p>
+        </header>
+
+        <!-- Form đặt lịch hẹn -->
+        <div class="date-form-card" id="date-form-card">
+          <form id="date-booking-form">
+            <div class="form-group">
+              <label for="date-input">
+                <span class="label-icon">📅</span> Ngày chúng mình hẹn hò:
+              </label>
+              <input type="date" id="date-input" required>
+            </div>
+
+            <div class="form-group">
+              <label for="time-input">
+                <span class="label-icon">⏰</span> Giờ anh qua đón công chúa:
+              </label>
+              <input type="time" id="time-input" required value="19:00">
+            </div>
+
+            <div class="form-group">
+              <label for="wish-input">
+                <span class="label-icon">🍜</span> Món em thích:
+              </label>
+              <input 
+                type="text"
+                id="wish-input" 
+                placeholder="Bất cứ nơi nào miễn là ăn cùng anh"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="location-input">
+                <span class="label-icon">📍</span> Địa điểm em thích:
+              </label>
+              <input 
+                type="text"
+                id="location-input" 
+                placeholder="Bất cứ nơi nào miễn là có anh"
+              >
+            </div>
+
+            <button type="submit" id="btn-submit-booking" class="btn btn-submit-date pulse-glow">
+              <span>Gửi cho anh ❤️</span>
+              <span class="btn-icon">🚀</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- MÀN KẾT THÚC NGỌT NGÀO (Sau khi gửi form) -->
+        <div id="booking-success-card" class="success-card hidden">
+          <div class="success-icon-wrap">
+            <span class="big-heart">💖</span>
+            <div class="success-sparkles">✨</div>
+          </div>
+          
+          <h2 class="success-title">Đã Gửi Thành Công!</h2>
+          <p class="success-msg">
+            "Lịch hẹn đã được gửi đến tim anh! Hẹn gặp em iu vào hôm đó nhé ❤️"
+          </p>
+
+          <div class="booking-summary" id="booking-summary-details">
+            <!-- Được render động từ JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
